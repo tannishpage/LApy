@@ -52,10 +52,18 @@ class matrix_opperations:
 
     def REF(self, matrix): #For now assuming all matricies passed are square and don't require any row exchanges
         matrix_duplicate = matrix
-        for x in range(0, matrix):
-            piviot = matrix[x][x]
-            for y in range(x+1, matrix[0]):
-                matrix_duplicate[y][x] = 
+        for x in range(0, len(matrix)):
+            piviot = float(matrix[x][x])
+            for y in range(x+1, len(matrix[0])):
+                ratio = float(float(matrix[y][x])/piviot)
+                matrix_duplicate[y] = self.row_reduction(matrix[x], matrix[y], ratio)
+        return matrix_duplicate
+
+    def row_reduction(self, pivoit_row, rowB, ratio):
+        reduced_row = []
+        for x in range(0, len(rowB)):
+            reduced_row.append(str(int(float(rowB[x]) - (ratio*float(pivoit_row[x])))))
+        return reduced_row
 
     def matrix_transpose(self, matrix): #Transposes a matrix
         result = make_matrix.make_zero_matrix(self, len(matrix), len(matrix[0])) #Make a zero matrix the same size as the matrix
