@@ -5,7 +5,7 @@ Plan:
 Basic Functionality:
     - Add and Subtract matricies DONE
     - Multiply Matricies DONE
-    - Compute Determinants
+    - Compute Determinants DONE
     - Compute Inverses
 
 
@@ -64,6 +64,13 @@ class matrix_opperations:
         for x in range(0, len(rowB)):
             reduced_row.append(str(int(float(rowB[x]) - (ratio*float(pivoit_row[x])))))
         return reduced_row
+
+    def compute_determinant(self, matrix):
+        reduced_matrix = self.REF(matrix)
+        determinant = 1.0
+        for x in range(0, len(reduced_matrix)):
+            determinant = determinant * float(reduced_matrix[x][x])
+        return determinant
 
     def matrix_transpose(self, matrix): #Transposes a matrix
         result = make_matrix.make_zero_matrix(self, len(matrix), len(matrix[0])) #Make a zero matrix the same size as the matrix
