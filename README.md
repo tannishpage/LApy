@@ -7,3 +7,4 @@ LApy is a Linear Algebra API for python in which one can perform the many Linear
   - Subtract Matricies
   - Transpose Matricies
   - Perform Row reduction to convert matrix into REF (Still in testing)
+  - Can compute determinants (uses REF function)
