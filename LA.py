@@ -6,7 +6,7 @@ Basic Functionality:
     - Add and Subtract matricies DONE
     - Multiply Matricies DONE
     - Compute Determinants DONE
-    - Compute Inverses
+    - Compute Inverses DONE
 
 
 TO-DO-LIST:
@@ -14,13 +14,15 @@ TO-DO-LIST:
     2. Test matrix_add DONE
     3. Make matrix_sub DONE 
     4. Make matrix_multiply DONE
-    5. Get print_matrix to have good formatting cause it sucks at the moment :)
+    5. Get print_matrix to have good formatting cause it sucks at the moment :) DONE
+    6. Multiply matricies by constants
 '''
 import random
+import sys
 class matrix_opperations:
 
-    def __init__(self, VERSION="0.1"):
-        self.VERSION = "0.1"
+    def __init__(self, VERSION="0.5"):
+        self.VERSION = "0.5"
 
     def matrix_add(self, matricies):
         result = matricies[0] #LA.make_matrix.make_zero_matrix(len(mm[1]), len(mm[1][1]))
@@ -50,18 +52,18 @@ class matrix_opperations:
                     temp_result = 0
         return result
 
-    def REF(self, matrix, augmented_column):#assume no row exchanges are required
-        #matrix = self.check_row_exchange(matrix, 0)
-        matrix_duplicate = matrix
-        aug_col_duplicate = augmented_column
+    def REF(self, matrix): #, augmented_column):#assume no row exchanges are required
+        matrix = self.check_matrix_row_exchange(matrix)
+        #matrix_duplicate = matrix
+        #aug_col_duplicate = augmented_column
         for x in range(0, len(matrix)):
+            matrix = self.check_row_exchange(matrix, x)
             piviot = float(matrix[x][x])
-            for y in range(x+1, len(matrix[0])):
+            for y in range(x+1, len(matrix)):
                 ratio = float(float(matrix[y][x])/piviot)
-                matrix_duplicate[y] = self.row_reduction(matrix_duplicate[x], matrix_duplicate[y], ratio)
-                aug_col_duplicate[y] = self.row_reduction(aug_col_duplicate[x], aug_col_duplicate[y], ratio) 
-            #matrix_duplicate = self.check_matrix_row_exchange(matrix_duplicate)
-        return matrix_duplicate, aug_col_duplicate
+                matrix[y] = self.row_reduction(matrix[x], matrix[y], ratio)
+                #augmented_column[y] = self.row_reduction(augmented_column[x], augmented_column[y], ratio) 
+        return matrix#, augmented_column
 
     def get_last_column(self, matrix):#assuming matrix is NxN+1
         last_column = []
@@ -73,18 +75,19 @@ class matrix_opperations:
         return last_column, square_matrix
 
     def check_row_exchange(self, matrix, row):
-        if matrix[row][row] == "0":
-            rowB = row + 1
+        if float(matrix[row][row]) == 0.0:
+            for x in range(0, len(matrix)):
+                if float(matrix[x][row]) != 0.0:
+                    rowB = x
             new_matrix = self.perform_row_exchange(row, rowB, matrix)
             return new_matrix
         else:
             return matrix
 
     def check_matrix_row_exchange(self, matrix):
-        new_matrix = []
         for x in range(0, len(matrix)):
-            new_matrix = self.check_row_exchange(matrix, x)
-        return new_matrix
+            matrix = self.check_row_exchange(matrix, x)
+        return matrix
 
     def perform_row_exchange(self, rowA, rowB, matrix):
         rowA_list = matrix[rowA]
@@ -92,10 +95,30 @@ class matrix_opperations:
         matrix[rowA] = rowB_list
         matrix[rowB] = rowA_list
         return matrix
-            
+
+    def make_piviots_ones(self, matrix):
+        new_matrix = []
+        for x in range(0, len(matrix)):
+            piviot = matrix[x][x]
+            row = []
+            for y in matrix[x]:
+                row.append(str(float(float(y)/float(piviot))))
+            else:
+                new_matrix.append(row)
+        return new_matrix
 
     def RREF(self, matrix):
-        pass
+        matrix = self.REF(matrix) #reduced to Row Echolon Form
+        #now performs elimination to make it into Reduced REF
+        matrix = self.check_matrix_row_exchange(matrix)
+        matrix = self.make_piviots_ones(matrix) #makes all piviots into 1s
+        for x in range(0, len(matrix))[::-1]:
+            #matrix = self.check_row_exchange(matrix, x)
+            piviot = float(matrix[x][x])
+            for y in range(0, x)[::-1]:
+                ratio = float(float(matrix[y][x])/piviot)
+                matrix[y] = self.row_reduction(matrix[x], matrix[y], ratio)
+        return matrix
 
     def row_reduction(self, pivoit_row, rowB, ratio):
         reduced_row = []
@@ -117,25 +140,22 @@ class matrix_opperations:
                 result[y][x] = matrix[x][y]
         return result
 
-    def compute_inverse(self, matrix):#transform into augmented matrix
-        determinant = self.compute_determinant(matrix)
-        identity = make_matrix.make_identity_matrix(len(matrix))
+    def compute_inverse(self, matrix, identity):#transform into augmented matrix
+        augmented = self.join_matricies(matrix, identity)
+        determinant = self.compute_determinant(augmented)
         if determinant == 0:
             print("Determinant is 0 cannot compute inverse")
             return False
         else:
-            print("Still in development")
+            return self.RREF(augmented) 
         
-        
-    def make_augmented_matrix(self, matrix):
-        real_matrix = make_matrix.make_zero_matrix(len(matrix[0])/2, len(matrix[0])/2) #Must always be a square matrix
-        augmented_matrix = make_matrix.make_zero_matrix(len(matrix[0])/2, len(matrix[0])/2) #Both real and augmented matrix must be same size
-        for x in range(0, len(matrix[0]/2)):
-            for y in range(0, len(matrix[0]/2)):
-                real_matrix[x][y] = matrix[x][y]
-                augmented_matrix[x][y] = matrix[x][len(matrix[0]/2) + y]
-        return real_matrix, augmented_matrix
-            
+    def join_matricies(self, matrixA, matrixB):
+            big_matrix = make_matrix.make_zero_matrix(self, len(matrixA), len(matrixA[0])+len(matrixB[0]))
+            for x in range(0, len(big_matrix)):
+                for y in range(0, len(matrixA[0])):
+                    big_matrix[x][y] = matrixA[x][y]
+                    big_matrix[x][y+(len(matrixA[0]))] = matrixB[x][y]
+            return big_matrix
 
     def print_matrix(self, matrix):
         for row in matrix:
@@ -144,17 +164,26 @@ class matrix_opperations:
             print("\n")
         return True
 
+    def print_matrix_new(self, matrix):
+        for row in matrix:
+            for element in row:
+                sys.stdout.write("{:<10}".format("{:.4f}".format(float(element))))
+            else:
+                sys.stdout.write("\n")
+        else:
+            print("\n")
+
 class make_matrix:
 
-    def __init__(self, VERSION="0.1"):
-        self.VERSION = "0.1"
+    def __init__(self, VERSION="0.5"):
+        self.VERSION = "0.5"
 
     def make_matrix(self):
         rows = int(input("Enter number of rows: "))
         matrix = []
         for x in range(0, rows):
-            row_values = input("Enter numbers in row {} (eg: 1,2) : ".format(x+1))
-            matrix.append(row_values.split(","))
+            row_values = input("Enter numbers in row {} (eg: 1 2 3) : ".format(x+1))
+            matrix.append(row_values.split(" "))
         return matrix
 
     def make_random_matrix(self, rows, columns):
