@@ -25,10 +25,10 @@ GITHUB = "https://github.com/tannishpage"
 LAPY_REPO = "https://github.com/tannishpage/LApy/tree/Stable_Version"
 VERSION = "0.6"
 
-class matrix_operations:
+class Matrix_Operations:
 
     def __init__(self):
-        pass
+        self._mm = Make_Matrix()
 
     def matrix_add(self, matricies):
         result = matricies[0]
@@ -47,7 +47,7 @@ class matrix_operations:
         return result
 
     def matrix_multiply(self, matrixA, matrixB):
-        result = make_matrix.make_zero_matrix(self, len(matrixA), len(matrixB[0]))
+        result = self._mm.make_zero_matrix(len(matrixA), len(matrixB[0]))
         temp_result = 0
         for x in range(0, len(matrixA)):
             for y in range(0, len(matrixA)):
@@ -56,6 +56,13 @@ class matrix_operations:
                 else:
                     result[x][y] = str(temp_result)
                     temp_result = 0
+        return result
+
+    def matrix_multiply_constant(self, matrix, constant):
+        result = self._mm.make_zero_matrix(len(matrix), len(matrix[0]))
+        for x in range(0, len(matrix)):
+            for y in range(0, len(matrix[0])):
+                result[x][y] = str(constant * int(matrix[x][y]))
         return result
 
     def REF(self, matrix):
@@ -70,7 +77,7 @@ class matrix_operations:
 
     def get_last_column(self, matrix):#assuming matrix is NxN+1
         last_column = []
-        square_matrix = make_matrix.make_zero_matrix(self, len(matrix), len(matrix))
+        square_matrix = self._mm.make_zero_matrix(len(matrix), len(matrix))
         for x in range(0, len(matrix)):
             for y in range(0, len(matrix)):
                 square_matrix[x][y] = matrix[x][y]
@@ -139,7 +146,7 @@ class matrix_operations:
 
     def matrix_transpose(self, matrix): #Transposes a matrix
         #Make a zero matrix the same size as the matrix
-        result = make_matrix.make_zero_matrix(self, len(matrix[0]), len(matrix))
+        result = self._mm.make_zero_matrix(len(matrix[0]), len(matrix))
         for x in range(0, len(result[0])):
             for y in range(0, len(result)):
                 result[y][x] = matrix[x][y]
@@ -155,7 +162,7 @@ class matrix_operations:
             return self.RREF(augmented) 
         
     def join_matricies(self, matrixA, matrixB):
-            big_matrix = make_matrix.make_zero_matrix(self, len(matrixA), 
+            big_matrix = self._mm.make_zero_matrix(len(matrixA), 
                                           len(matrixA[0])+len(matrixB[0]))
             for x in range(0, len(big_matrix)):
                 for y in range(0, len(matrixA[0])):
@@ -179,7 +186,7 @@ class matrix_operations:
         else:
             print("\n")
 
-class make_matrix:
+class Make_Matrix:
     # A matrix is defiend as a two dimentional list
     def __init__(self):
         pass
@@ -212,19 +219,19 @@ class make_matrix:
             matrix[x][x] = "1"
         return matrix
 
-class vector_operations:
+class Vector_Operations:
     def __init__(self):
-        pass
+        self._mv = Make_Vector()
 
     def vector_add(self, vectors):
-        result = make_vector.make_zero_vector(self, len(vectors[0]))
+        result = self._mv.make_zero_vector(self, len(vectors[0]))
         for vector in vectors:
             for x in range(0, len(vector)):
                 result[x] = str(float(result[x]) + float(vector[x]))
         return result
 
     def vector_subtract(self, vectorA, vectorB):
-        result = make_vector.make_zero_vector(self, len(vectorA))
+        result = self._mv.make_zero_vector(self, len(vectorA))
         for x in range(0, len(vectorA)):
             result[x] = str(float(vectorA[x]) - float(vectorB[x]))
         return result
@@ -245,27 +252,47 @@ class vector_operations:
         return result
             
 
-class make_vector:
-    # A vector is defiend as a 1D list
+class Make_Vector:
     def __init__(self):
         pass
 
-    def make_vector(self):
-        vector_values = input("Enter vector values (eg: 1 2 3): ")
-        vector = vector_values.split(" ")
+    def make_coloumn_vector(self):
+        vector_values = input("Enter vector values (eg: 1 2 3): ").split(" ")
+        vector = []
+        length = len(vector_values)
+        for x in range(0, len(vector_values)):
+            vector.append([vector_values[x]])
         return vector
 
-    def make_zero_vector(self, size):
-        return ["0" for x in range(0, size)]
+    def make_zero_column_vector(self, size):
+        vector = []
+        for x in range(0, size):
+            vector.append(["0"])
+        return vector
 
-    def make_random_vector(self, size):
-        return [str(random.randint(0, 9)) for x in range(0, size)]
+    def make_random_column_vector(self, size):
+        vector = []
+        for x in range(0, size):
+            vector.append([str(random.randint(0, 9))])
+        return vector
+
+    def make_row_vector(self):
+        vector_values = input("Enter vector values (eg: 1 2 3): ")
+        vector = vector_values.split(" ")
+        return [vector]
+
+    def make_zero_row_vector(self, size):
+        return [["0" for x in range(0, size)]]
+
+    def make_random_row_vector(self, size):
+        return [[str(random.randint(0, 9)) for x in range(0, size)]]
 
 def test():
-    mm = make_matrix()
-    mo = matrix_operations()
+    mm = Make_Matrix()
+    mo = Matrix_Operations()
     random_matrix = mm.make_random_matrix(3, 4)
     mo.print_matrix_new(random_matrix)
+    mo.print_matrix_new(mo.matrix_multiply_constant(random_matrix, 10))
 
 if __name__ == "__main__":
     print("""Author         :  {}
