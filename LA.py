@@ -1,31 +1,17 @@
-'''
-Plan:
-    This is supposed to be an api for Linear Algebra so it is supposed to perform matrix opperations and other vector operations like dot products and cross products.
-
-Basic Functionality:
-    - Add and Subtract matricies DONE
-    - Multiply Matricies DONE
-    - Compute Determinants DONE
-    - Compute Inverses DONE
-
-
-TO-DO-LIST:
-    1. Finish make_zero_matrix DONE
-    2. Test matrix_add DONE
-    3. Make matrix_sub DONE 
-    4. Make matrix_multiply DONE
-    5. Get print_matrix to have good formatting cause it sucks at the moment :) DONE
-    6. Multiply matricies by constants
-'''
 import random
 import sys
-class matrix_opperations:
+AUTHOR = "Tannishpage"
+GITHUB = "https://github.com/tannishpage"
+LAPY_REPO = "https://github.com/tannishpage/LApy/tree/Stable_Version"
+VERSION = "0.6"
 
-    def __init__(self, VERSION="0.5"):
-        self.VERSION = "0.5"
+class matrix_operations:
+
+    def __init__(self):
+        pass
 
     def matrix_add(self, matricies):
-        result = matricies[0] #LA.make_matrix.make_zero_matrix(len(mm[1]), len(mm[1][1]))
+        result = matricies[0]
         for matrix in matricies[1::]:
             for x in range(0, len(result)):
                 for y in range(0, len(result[0])):
@@ -52,18 +38,15 @@ class matrix_opperations:
                     temp_result = 0
         return result
 
-    def REF(self, matrix): #, augmented_column):#assume no row exchanges are required
+    def REF(self, matrix):
         matrix = self.check_matrix_row_exchange(matrix)
-        #matrix_duplicate = matrix
-        #aug_col_duplicate = augmented_column
         for x in range(0, len(matrix)):
             matrix = self.check_row_exchange(matrix, x)
             piviot = float(matrix[x][x])
             for y in range(x+1, len(matrix)):
                 ratio = float(float(matrix[y][x])/piviot)
                 matrix[y] = self.row_reduction(matrix[x], matrix[y], ratio)
-                #augmented_column[y] = self.row_reduction(augmented_column[x], augmented_column[y], ratio) 
-        return matrix#, augmented_column
+        return matrix
 
     def get_last_column(self, matrix):#assuming matrix is NxN+1
         last_column = []
@@ -77,8 +60,9 @@ class matrix_opperations:
     def check_row_exchange(self, matrix, row):
         if float(matrix[row][row]) == 0.0:
             for x in range(0, len(matrix)):
-                if float(matrix[x][row]) != 0.0:
+                if (float(matrix[x][row]) != 0.0):
                     rowB = x
+                    break
             new_matrix = self.perform_row_exchange(row, rowB, matrix)
             return new_matrix
         else:
@@ -134,7 +118,8 @@ class matrix_opperations:
         return determinant
 
     def matrix_transpose(self, matrix): #Transposes a matrix
-        result = make_matrix.make_zero_matrix(self, len(matrix), len(matrix[0])) #Make a zero matrix the same size as the matrix
+        #Make a zero matrix the same size as the matrix
+        result = make_matrix.make_zero_matrix(self, len(matrix[0]), len(matrix))
         for x in range(0, len(result[0])):
             for y in range(0, len(result)):
                 result[y][x] = matrix[x][y]
@@ -150,7 +135,8 @@ class matrix_opperations:
             return self.RREF(augmented) 
         
     def join_matricies(self, matrixA, matrixB):
-            big_matrix = make_matrix.make_zero_matrix(self, len(matrixA), len(matrixA[0])+len(matrixB[0]))
+            big_matrix = make_matrix.make_zero_matrix(self, len(matrixA), 
+                                          len(matrixA[0])+len(matrixB[0]))
             for x in range(0, len(big_matrix)):
                 for y in range(0, len(matrixA[0])):
                     big_matrix[x][y] = matrixA[x][y]
@@ -174,9 +160,9 @@ class matrix_opperations:
             print("\n")
 
 class make_matrix:
-
-    def __init__(self, VERSION="0.5"):
-        self.VERSION = "0.5"
+    # A matrix is defiend as a two dimentional list
+    def __init__(self):
+        pass
 
     def make_matrix(self):
         rows = int(input("Enter number of rows: "))
@@ -189,15 +175,14 @@ class make_matrix:
     def make_random_matrix(self, rows, columns):
         matrix = []
         for x in range(0, rows):
-            row_values = [str(random.randint(0, 9)) for x in range(0, columns)]
+            row_values = [str(random.randint(0, 100)) for x in range(0, columns)]
             matrix.append(row_values)
         return matrix
 
     def make_zero_matrix(self, rows, columns):
         matrix = []
         for x in range(0, rows):
-            column = ("0,"*columns).split(',')
-            del column[len(column)-1]
+            column = ["0" for x in range(0, columns)]
             matrix.append(column)
         return matrix
 
@@ -206,3 +191,65 @@ class make_matrix:
         for x in range(0, rows):
             matrix[x][x] = "1"
         return matrix
+
+class vector_operations:
+    def __init__(self):
+        pass
+
+    def vector_add(self, vectors):
+        result = make_vector.make_zero_vector(self, len(vectors[0]))
+        for vector in vectors:
+            for x in range(0, len(vector)):
+                result[x] = str(float(result[x]) + float(vector[x]))
+        return result
+
+    def vector_subtract(self, vectorA, vectorB):
+        result = make_vector.make_zero_vector(self, len(vectorA))
+        for x in range(0, len(vectorA)):
+            result[x] = str(float(vectorA[x]) - float(vectorB[x]))
+        return result
+
+    def vector_cross_product(self, vectorA, vectorB):
+       """
+            - Is vector cross product valid for len(vector) > 3 and len(vector) < 3?
+       """
+       # matrixA = 
+       # matrixB = 
+       # matrixC =
+       pass
+
+    def vector_dot_product(self, vectorA, vectorB):
+        result = 0
+        for x in range(0, len(vectorA)):
+            result = result + (float(vectorA[x]) * float(vectorB[x]))
+        return result
+            
+
+class make_vector:
+    # A vector is defiend as a 1D list
+    def __init__(self):
+        pass
+
+    def make_vector(self):
+        vector_values = input("Enter vector values (eg: 1 2 3): ")
+        vector = vector_values.split(" ")
+        return vector
+
+    def make_zero_vector(self, size):
+        return ["0" for x in range(0, size)]
+
+    def make_random_vector(self, size):
+        return [str(random.randint(0, 9)) for x in range(0, size)]
+
+def test():
+    mm = make_matrix()
+    mo = matrix_operations()
+    random_matrix = mm.make_random_matrix(3, 4)
+    mo.print_matrix_new(random_matrix)
+
+if __name__ == "__main__":
+    print("""Author         :  {}
+My Github      :  {}
+LApy Repo      :  {}
+LApy Version   :  {}
+""".format(AUTHOR, GITHUB, LAPY_REPO, VERSION))
