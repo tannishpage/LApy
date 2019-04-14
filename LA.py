@@ -3,7 +3,7 @@ import sys
 AUTHOR = "Tannishpage"
 GITHUB = "https://github.com/tannishpage"
 LAPY_REPO = "https://github.com/tannishpage/LApy/tree/Stable_Version"
-VERSION = "0.5"
+VERSION = "0.6"
 
 class matrix_operations:
 
