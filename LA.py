@@ -238,7 +238,7 @@ class Vector_Operations:
 
     def vector_cross_product(self, vectorA, vectorB):
        """
-            - Is vector cross product valid for len(vector) > 3 and len(vector) < 3?
+        - Is vector cross product valid for len(vector) > 3 and len(vector) < 3?
        """
        # matrixA = 
        # matrixB = 
