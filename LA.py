@@ -24,7 +24,8 @@ import sys
 # Global Variables
 AUTHOR = "Tannishpage"
 GITHUB = "https://github.com/tannishpage"
-LAPY_REPO = "https://github.com/tannishpage/LApy/tree/Stable_Version"
+LAPY_STABLE = "https://github.com/tannishpage/LApy/tree/Stable_Version"
+LAPY_DEV = "https://github.com/tannishpage/LApy"
 VERSION = "0.6"
 
 # Exceptions that are specific
@@ -232,7 +233,7 @@ class Make_Matrix:
         return matrix
 
 class Matrix:
-    def __init__(self, matrix):
+    def __init__(self, matrix=[]):
         self._matrix = matrix
 
     def __iter__(self):
@@ -321,7 +322,7 @@ class Make_Vector:
 
 class Vector:
     
-    def __init__(self, vector):
+    def __init__(self, vector=[]):
         self._vector = vector
 
     def __iter__(self):
@@ -354,6 +355,7 @@ class Vector:
 if __name__ == "__main__":
     print("""Author         :  {}
 My Github      :  {}
-LApy Repo      :  {}
+LApy Stable    :  {}
+LApy Dev       :  {}
 LApy Version   :  {}
-""".format(AUTHOR, GITHUB, LAPY_REPO, VERSION))
+""".format(AUTHOR, GITHUB, LAPY_STABLE, LAPY_DEV, VERSION))
