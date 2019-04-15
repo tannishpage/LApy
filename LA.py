@@ -17,13 +17,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-
+# Libraries required
 import random
 import sys
+
+# Global Variables
 AUTHOR = "Tannishpage"
 GITHUB = "https://github.com/tannishpage"
 LAPY_REPO = "https://github.com/tannishpage/LApy/tree/Stable_Version"
 VERSION = "0.6"
+
+# Exceptions that are specific
+class Zero_Determinant_Error(BaseException):pass
+class Not_Compatable_Operation(BaseException):pass
+class Incompatable_Matricies(BaseException):pass
 
 class Matrix_Operations:
 
@@ -47,6 +54,11 @@ class Matrix_Operations:
         return result
 
     def matrix_multiply(self, matrixA, matrixB):
+        if len(matrixA[0]) != len(matrixB):
+            raise Incompatable_Matricies(
+            "Matrix A columns not equal to Matrix B rows {} != {}".format(
+            len(matrixA[0]), len(matrixB)))
+
         result = self._mm.make_zero_matrix(len(matrixA), len(matrixB[0]))
         temp_result = 0
         for x in range(0, len(matrixA)):
@@ -156,8 +168,8 @@ class Matrix_Operations:
         augmented = self.join_matricies(matrix, identity)
         determinant = self.compute_determinant(augmented)
         if determinant == 0:
-            print("Determinant is 0 cannot compute inverse")
-            return False
+            raise Zero_Determinant_Error(
+            "Matrix Inverse does not exist when determinant is 0")
         else:
             return self.RREF(augmented) 
         
@@ -204,7 +216,7 @@ class Make_Matrix:
         for x in range(0, rows):
             row_values = [str(random.randint(0, 100)) for x in range(0, columns)]
             matrix.append(row_values)
-        return matrix
+        return Matrix(matrix)
 
     def make_zero_matrix(self, rows, columns):
         matrix = []
@@ -218,6 +230,26 @@ class Make_Matrix:
         for x in range(0, rows):
             matrix[x][x] = "1"
         return matrix
+
+class Matrix:
+    def __init__(self, matrix):
+        self._matrix = matrix
+
+    def __iter__(self):
+        return iter(self._matrix)
+
+    def __len__(self):
+        return len(self._matrix)
+
+    def __repr__(self):
+        return "Matrix({})".format(self._matrix)
+
+    def __str__(self):
+        return "{}".format(self._matrix)
+
+    def __getitem__(self, args):
+        return self._matrix[args]
+
 
 class Vector_Operations:
     def __init__(self):
@@ -262,37 +294,62 @@ class Make_Vector:
         length = len(vector_values)
         for x in range(0, len(vector_values)):
             vector.append([vector_values[x]])
-        return vector
+        return Vector(vector)
 
     def make_zero_column_vector(self, size):
         vector = []
         for x in range(0, size):
             vector.append(["0"])
-        return vector
+        return Vector(vector)
 
     def make_random_column_vector(self, size):
         vector = []
         for x in range(0, size):
             vector.append([str(random.randint(0, 9))])
-        return vector
+        return Vector(vector)
 
     def make_row_vector(self):
         vector_values = input("Enter vector values (eg: 1 2 3): ")
         vector = vector_values.split(" ")
-        return [vector]
+        return Vector([vector])
 
     def make_zero_row_vector(self, size):
-        return [["0" for x in range(0, size)]]
+        return Vector([["0" for x in range(0, size)]])
 
     def make_random_row_vector(self, size):
-        return [[str(random.randint(0, 9)) for x in range(0, size)]]
+        return Vector([[str(random.randint(0, 9)) for x in range(0, size)]])
 
-def test():
-    mm = Make_Matrix()
-    mo = Matrix_Operations()
-    random_matrix = mm.make_random_matrix(3, 4)
-    mo.print_matrix_new(random_matrix)
-    mo.print_matrix_new(mo.matrix_multiply_constant(random_matrix, 10))
+class Vector:
+    
+    def __init__(self, vector):
+        self._vector = vector
+
+    def __iter__(self):
+        return iter(self._vector)
+
+    def __len__(self):
+        return len(self._vector)
+
+    def __repr__(self):
+        return "Vector({})".format(self._vector)
+
+    def __str__(self):
+        return "{}".format(self._vector)
+
+    def __getitem__(self, args):
+        return self._vector[args]
+
+    def is_column(self):
+        if len(self._vector) > 1:
+            return True
+        else:
+            return False
+
+    def is_row(self):
+        if len(self._vector) == 1:
+            return True
+        else:
+            return False
 
 if __name__ == "__main__":
     print("""Author         :  {}
