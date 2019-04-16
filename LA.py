@@ -39,7 +39,7 @@ class Matrix_Operations:
     def __init__(self):
         self._mm = Make_Matrix()
 
-    def matrix_add(self, matricies):
+    def matrix_add(self, *matricies):
         result = matricies[0]
         for matrix in matricies[1::]:
             for x in range(0, len(result)):
@@ -47,7 +47,7 @@ class Matrix_Operations:
                     result[x][y] = str(int(result[x][y]) + int(matrix[x][y]))
         return result
 
-    def matrix_subtract(self, matricies):
+    def matrix_subtract(self, *matricies):
         result = matricies[0]
         for matrix in matricies[1::]:
             for x in range(0, len(result)):
@@ -90,12 +90,12 @@ class Matrix_Operations:
         return matrix
 
     def get_last_column(self, matrix):#assuming matrix is NxN+1
-        last_column = []
+        last_column = Matrix()
         square_matrix = self._mm.make_zero_matrix(len(matrix), len(matrix))
         for x in range(0, len(matrix)):
             for y in range(0, len(matrix)):
                 square_matrix[x][y] = matrix[x][y]
-            last_column.append(matrix[x][len(matrix)])
+            last_column.append([matrix[x][len(matrix)]])
         return last_column, square_matrix
 
     def check_row_exchange(self, matrix, row):
@@ -184,21 +184,15 @@ class Matrix_Operations:
                     big_matrix[x][y+(len(matrixA[0]))] = matrixB[x][y]
             return big_matrix
 
-    def print_matrix(self, matrix):
-        for row in matrix:
-            print("    ".join(row))
-        else:
-            print("\n")
-        return True
-
-    def print_matrix_new(self, matrix):
-        for row in matrix:
-            for element in row:
-                sys.stdout.write("{:<12}".format("{:.2f}".format(float(element))))
+    def print_matrix(self, *matricies, padding=12, sigfig=2):
+        for matrix in matricies:
+            for row in matrix:
+                for element in row:
+                    sys.stdout.write("{:<{}}".format("{:.{}f}".format(float(element), sigfig), padding))
+                else:
+                    sys.stdout.write("\n")
             else:
-                sys.stdout.write("\n")
-        else:
-            print("\n")
+                print("\n")
 
 class Make_Matrix:
     # A matrix is defiend as a two dimentional list
@@ -258,32 +252,22 @@ class Matrix:
     def append(self, value):
         self._matrix.append(value)
 
+    def is_column(self):
+        if (len(self._matrix) > 1 and len(self._matrix[0]) == 1):
+            return True
+        else:
+            return False
+
+    def is_row(self):
+        if len(self._matrix) == 1:
+            return True
+        else:
+            return False
+
 
 class Vector_Operations:
     def __init__(self):
-        self._mv = Make_Vector()
-
-    def vector_add(self, vectors):
-        result = self._mv.make_zero_vector(self, len(vectors[0]))
-        for vector in vectors:
-            for x in range(0, len(vector)):
-                result[x] = str(float(result[x]) + float(vector[x]))
-        return result
-
-    def vector_subtract(self, vectorA, vectorB):
-        result = self._mv.make_zero_vector(self, len(vectorA))
-        for x in range(0, len(vectorA)):
-            result[x] = str(float(vectorA[x]) - float(vectorB[x]))
-        return result
-
-    def vector_cross_product(self, vectorA, vectorB):
-       """
-        - Is vector cross product valid for len(vector) > 3 and len(vector) < 3?
-       """
-       # matrixA = 
-       # matrixB = 
-       # matrixC =
-       pass
+        self._mm = Make_Matrix()
 
     def vector_dot_product(self, vectorA, vectorB):
         if not vectorA.is_column() or not vectorB.is_column():
@@ -292,80 +276,6 @@ class Vector_Operations:
         for x in range(0, len(vectorA)):
             result = result + (float(vectorA[x][0]) * float(vectorB[x][0]))
         return result
-            
-
-class Make_Vector:
-    def __init__(self):
-        pass
-
-    def make_coloumn_vector(self):
-        vector_values = input("Enter vector values (eg: 1 2 3): ").split(" ")
-        vector = []
-        length = len(vector_values)
-        for x in range(0, len(vector_values)):
-            vector.append([vector_values[x]])
-        return Vector(vector)
-
-    def make_zero_column_vector(self, size):
-        vector = []
-        for x in range(0, size):
-            vector.append(["0"])
-        return Vector(vector)
-
-    def make_random_column_vector(self, size):
-        vector = []
-        for x in range(0, size):
-            vector.append([str(random.randint(0, 9))])
-        return Vector(vector)
-
-    def make_row_vector(self):
-        vector_values = input("Enter vector values (eg: 1 2 3): ")
-        vector = vector_values.split(" ")
-        return Vector([vector])
-
-    def make_zero_row_vector(self, size):
-        return Vector([["0" for x in range(0, size)]])
-
-    def make_random_row_vector(self, size):
-        return Vector([[str(random.randint(0, 9)) for x in range(0, size)]])
-
-class Vector:
-    
-    def __init__(self, vector=[]):
-        self._vector = vector
-
-    def __iter__(self):
-        return iter(self._vector)
-
-    def __len__(self):
-        return len(self._vector)
-
-    def __repr__(self):
-        return "Vector({})".format(self._vector)
-
-    def __str__(self):
-        return "{}".format(self._vector)
-
-    def __getitem__(self, key):
-        return self._vector[key]
-
-    def __setitem__(self, key, value):
-        self._vector[key] = value
-
-    def append(self, arg):
-        self._vector.append(arg)
-
-    def is_column(self):
-        if len(self._vector) > 1:
-            return True
-        else:
-            return False
-
-    def is_row(self):
-        if len(self._vector) == 1:
-            return True
-        else:
-            return False
 
 if __name__ == "__main__":
     print("""Author         :  {}
