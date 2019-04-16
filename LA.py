@@ -32,6 +32,7 @@ VERSION = "0.6"
 class Zero_Determinant_Error(BaseException):pass
 class Not_Compatable_Operation(BaseException):pass
 class Incompatable_Matricies(BaseException):pass
+class Invalid_Vectors(BaseException):pass
 
 class Matrix_Operations:
 
@@ -63,8 +64,8 @@ class Matrix_Operations:
         result = self._mm.make_zero_matrix(len(matrixA), len(matrixB[0]))
         temp_result = 0
         for x in range(0, len(matrixA)):
-            for y in range(0, len(matrixA)):
-                for z in range(0, len(matrixA)):
+            for y in range(0, len(matrixB[0])):
+                for z in range(0, len(matrixA[0])):
                     temp_result = temp_result + (int(matrixA[x][z]) * int(matrixB[z][y]))
                 else:
                     result[x][y] = str(temp_result)
@@ -129,7 +130,7 @@ class Matrix_Operations:
                 row.append(str(float(float(y)/float(piviot))))
             else:
                 new_matrix.append(row)
-        return new_matrix
+        return Matrix(new_matrix)
 
     def RREF(self, matrix):
         matrix = self.REF(matrix) #reduced to Row Echolon Form
@@ -142,7 +143,7 @@ class Matrix_Operations:
             for y in range(0, x)[::-1]:
                 ratio = float(float(matrix[y][x])/piviot)
                 matrix[y] = self.row_reduction(matrix[x], matrix[y], ratio)
-        return matrix
+        return Matrix(matrix)
 
     def row_reduction(self, pivoit_row, rowB, ratio):
         reduced_row = []
@@ -163,7 +164,7 @@ class Matrix_Operations:
         for x in range(0, len(result[0])):
             for y in range(0, len(result)):
                 result[y][x] = matrix[x][y]
-        return result
+        return Matrix(result)
 
     def compute_inverse(self, matrix, identity):#transform into augmented matrix
         augmented = self.join_matricies(matrix, identity)
@@ -193,7 +194,7 @@ class Matrix_Operations:
     def print_matrix_new(self, matrix):
         for row in matrix:
             for element in row:
-                sys.stdout.write("{:<10}".format("{:.4f}".format(float(element))))
+                sys.stdout.write("{:<12}".format("{:.2f}".format(float(element))))
             else:
                 sys.stdout.write("\n")
         else:
@@ -210,7 +211,7 @@ class Make_Matrix:
         for x in range(0, rows):
             row_values = input("Enter numbers in row {} (eg: 1 2 3) : ".format(x+1))
             matrix.append(row_values.split(" "))
-        return matrix
+        return Matrix(matrix)
 
     def make_random_matrix(self, rows, columns):
         matrix = []
@@ -224,13 +225,13 @@ class Make_Matrix:
         for x in range(0, rows):
             column = ["0" for x in range(0, columns)]
             matrix.append(column)
-        return matrix
+        return Matrix(matrix)
 
     def make_identity_matrix(self, rows):
         matrix = self.make_zero_matrix(rows, rows)
         for x in range(0, rows):
             matrix[x][x] = "1"
-        return matrix
+        return Matrix(matrix)
 
 class Matrix:
     def __init__(self, matrix=[]):
@@ -248,8 +249,14 @@ class Matrix:
     def __str__(self):
         return "{}".format(self._matrix)
 
-    def __getitem__(self, args):
-        return self._matrix[args]
+    def __getitem__(self, key):
+        return self._matrix[key]
+
+    def __setitem__(self, key, value):
+        self._matrix[key] = value
+
+    def append(self, value):
+        self._matrix.append(value)
 
 
 class Vector_Operations:
@@ -279,9 +286,11 @@ class Vector_Operations:
        pass
 
     def vector_dot_product(self, vectorA, vectorB):
+        if not vectorA.is_column() or not vectorB.is_column():
+            raise Invalid_Vectors("VectorA or VectorB are not column vectors")
         result = 0
         for x in range(0, len(vectorA)):
-            result = result + (float(vectorA[x]) * float(vectorB[x]))
+            result = result + (float(vectorA[x][0]) * float(vectorB[x][0]))
         return result
             
 
@@ -337,8 +346,14 @@ class Vector:
     def __str__(self):
         return "{}".format(self._vector)
 
-    def __getitem__(self, args):
-        return self._vector[args]
+    def __getitem__(self, key):
+        return self._vector[key]
+
+    def __setitem__(self, key, value):
+        self._vector[key] = value
+
+    def append(self, arg):
+        self._vector.append(arg)
 
     def is_column(self):
         if len(self._vector) > 1:

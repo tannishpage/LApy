@@ -2,18 +2,19 @@ import LA
 mm = LA.Make_Matrix()
 mo = LA.Matrix_Operations()
 mv = LA.Make_Vector()
+vo = LA.Vector_Operations()
+
 def test():
-    random_matrix = mm.make_random_matrix(3, 4)
-    mo.print_matrix_new(random_matrix)
-    mo.print_matrix_new(mo.matrix_multiply_constant(random_matrix, 10))
-    random_column_vector = mv.make_random_column_vector(3)
-    random_row_vector = mv.make_random_row_vector(3)
-    mo.print_matrix_new(random_column_vector)
-    mo.print_matrix_new(random_row_vector)
+    m1 = mm.make_random_matrix(2, 2)
+    i = mm.make_identity_matrix(2)
+    vec_r = mv.make_random_column_vector(2)
+    vec_ans = mv.make_zero_column_vector(2)
+    mo.print_matrix_new(m1)
+    mo.print_matrix_new(i)
+    mo.print_matrix_new(vec_r)
+    mo.print_matrix_new(vec_ans)
+    mo.print_matrix_new(mo.compute_inverse(m1, i))
+    vec_ans = mo.matrix_multiply(mo.compute_inverse(m1, i), vec_r)
+    mo.print_matrix_new(vec_ans)    
 
-def test2():
-    m1 = mm.make_random_matrix(3, 3)
-    m2 = mm.make_random_matrix(3, 3)
-    mo.print_matrix_new(mo.matrix_multiply(m1, m2))
-
-test2()
+test()
