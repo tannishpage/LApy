@@ -40,20 +40,20 @@ class Matrix_Operations:
         self._mm = Make_Matrix()
 
     def matrix_add(self, *matricies):
-        result = matricies[0]
-        for matrix in matricies[1::]:
+        result = self._mm.make_zero_matrix(len(matricies[0]), len(matricies[0][0]))
+        for matrix in matricies:
             for x in range(0, len(result)):
                 for y in range(0, len(result[0])):
                     result[x][y] = str(int(result[x][y]) + int(matrix[x][y]))
         return result
 
-    def matrix_subtract(self, *matricies):
-        result = matricies[0]
-        for matrix in matricies[1::]:
-            for x in range(0, len(result)):
-                for y in range(0, len(result[0])):
-                    result[x][y] = str(int(result[x][y]) - int(matrix[x][y]))
+    def matrix_subtract(self, matrixA, matrixB):
+        result = matrixA
+        for x in range(0, len(result)):
+            for y in range(0, len(result[0])):
+                result[x][y] = str(int(result[x][y]) - int(matrixB[x][y]))
         return result
+
 
     def matrix_multiply(self, matrixA, matrixB):
         if len(matrixA[0]) != len(matrixB):
@@ -173,7 +173,11 @@ class Matrix_Operations:
             raise Zero_Determinant_Error(
             "Matrix Inverse does not exist when determinant is 0")
         else:
-            return self.RREF(augmented) 
+            return self.RREF(augmented)
+
+    def mcp(zero_matrix, matrix):
+        #Copies matrix into a new matrix wihout being passed as a reference
+        pass
         
     def join_matricies(self, matrixA, matrixB):
             big_matrix = self._mm.make_zero_matrix(len(matrixA), 
