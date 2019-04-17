@@ -173,7 +173,15 @@ class Matrix_Operations:
             raise Zero_Determinant_Error(
             "Matrix Inverse does not exist when determinant is 0")
         else:
-            return self.RREF(augmented)
+            inverse = self.RREF(augmented)
+            return self.split_matrix(inverse, int(len(inverse[0])/2))
+
+    def split_matrix(self, matrix, start):
+        result = self._mm.make_zero_matrix(len(matrix), start)
+        for x in range(0, len(matrix)):
+            for y in range(0, start):
+                result[x][y] = matrix[x][y+start]
+        return result
 
     def mcp(zero_matrix, matrix):
         #Copies matrix into a new matrix wihout being passed as a reference
