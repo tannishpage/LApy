@@ -200,7 +200,8 @@ class Matrix_Operations:
         for matrix in matricies:
             for row in matrix:
                 for element in row:
-                    sys.stdout.write("{:<{}}".format("{:.{}f}".format(float(element), sigfig), padding))
+                    sys.stdout.write("{:<{}}".format("{:.{}f}".format(
+                                              float(element), sigfig), padding))
                 else:
                     sys.stdout.write("\n")
             else:
@@ -284,10 +285,33 @@ class Vector_Operations:
     def vector_dot_product(self, vectorA, vectorB):
         if not vectorA.is_column() or not vectorB.is_column():
             raise Invalid_Vectors("VectorA or VectorB are not column vectors")
+
         result = 0
         for x in range(0, len(vectorA)):
             result = result + (float(vectorA[x][0]) * float(vectorB[x][0]))
         return result
+
+    def vector_cross_product(self, vectorA, vectorB):
+        if not vectorA.is_column() or not vectorB.is_column():
+            raise Invalid_Vectors("VectorA or VectorB are not column vectors")
+        if len(vectorA) != 3 or len(vectorB) != 3:
+            raise Invalid_Vectors("VectorA or VectorB are not in R^3")
+
+        result = self._mm.make_zero_matrix(3, 1)
+        result[0][0] = str((int(vectorA[1][0]) * int(vectorB[2][0])) - 
+                           (int(vectorA[2][0]) * int(vectorB[1][0])))
+
+        result[1][0] = str((int(vectorA[2][0]) * int(vectorB[0][0])) - 
+                           (int(vectorA[0][0]) * int(vectorB[2][0])))
+
+        result[2][0] = str((int(vectorA[0][0]) * int(vectorB[1][0])) - 
+                           (int(vectorA[1][0]) * int(vectorB[0][0])))
+        return result
+
+    def vector_magnitude(self, vectorA):
+        magnitude = self.vector_dot_product(vectorA, vectorA)**0.5
+        return magnitude
+
 
 if __name__ == "__main__":
     print("""Author         :  {}
