@@ -44,14 +44,14 @@ class Matrix_Operations:
         for matrix in matricies:
             for x in range(0, len(result)):
                 for y in range(0, len(result[0])):
-                    result[x][y] = str(int(result[x][y]) + int(matrix[x][y]))
+                    result[x][y] = str(float(result[x][y]) + float(matrix[x][y]))
         return result
 
     def matrix_subtract(self, matrixA, matrixB):
         result = matrixA
         for x in range(0, len(result)):
             for y in range(0, len(result[0])):
-                result[x][y] = str(int(result[x][y]) - int(matrixB[x][y]))
+                result[x][y] = str(float(result[x][y]) - float(matrixB[x][y]))
         return result
 
 
@@ -66,7 +66,7 @@ class Matrix_Operations:
         for x in range(0, len(matrixA)):
             for y in range(0, len(matrixB[0])):
                 for z in range(0, len(matrixA[0])):
-                    temp_result = temp_result + (int(matrixA[x][z]) * int(matrixB[z][y]))
+                    temp_result = temp_result + (float(matrixA[x][z]) * float(matrixB[z][y]))
                 else:
                     result[x][y] = str(temp_result)
                     temp_result = 0
@@ -76,7 +76,7 @@ class Matrix_Operations:
         result = self._mm.make_zero_matrix(len(matrix), len(matrix[0]))
         for x in range(0, len(matrix)):
             for y in range(0, len(matrix[0])):
-                result[x][y] = str(constant * int(matrix[x][y]))
+                result[x][y] = str(constant * float(matrix[x][y]))
         return result
 
     def REF(self, matrix):
@@ -223,7 +223,7 @@ class Make_Matrix:
     def make_random_matrix(self, rows, columns):
         matrix = []
         for x in range(0, rows):
-            row_values = [str(random.randint(0, 100)) for x in range(0, columns)]
+            row_values = [str(random.randint(0, 5)) for x in range(0, columns)]
             matrix.append(row_values)
         return Matrix(matrix)
 
@@ -281,10 +281,11 @@ class Matrix:
 class Vector_Operations:
     def __init__(self):
         self._mm = Make_Matrix()
+        self._mo = Matrix_Operations()
 
     def vector_dot_product(self, vectorA, vectorB):
         if not vectorA.is_column() or not vectorB.is_column():
-            raise Invalid_Vectors("VectorA or VectorB are not column vectors")
+            raise Invalid_Vectors("Vector A or B are not column vectors")
 
         result = 0
         for x in range(0, len(vectorA)):
@@ -293,25 +294,33 @@ class Vector_Operations:
 
     def vector_cross_product(self, vectorA, vectorB):
         if not vectorA.is_column() or not vectorB.is_column():
-            raise Invalid_Vectors("VectorA or VectorB are not column vectors")
+            raise Invalid_Vectors("Vector A or B are not column vectors")
         if len(vectorA) != 3 or len(vectorB) != 3:
-            raise Invalid_Vectors("VectorA or VectorB are not in R^3")
+            raise Invalid_Vectors("Vector A or B are not in R^3")
 
         result = self._mm.make_zero_matrix(3, 1)
-        result[0][0] = str((int(vectorA[1][0]) * int(vectorB[2][0])) - 
-                           (int(vectorA[2][0]) * int(vectorB[1][0])))
+        result[0][0] = str((float(vectorA[1][0]) * float(vectorB[2][0])) - 
+                           (float(vectorA[2][0]) * float(vectorB[1][0])))
 
-        result[1][0] = str((int(vectorA[2][0]) * int(vectorB[0][0])) - 
-                           (int(vectorA[0][0]) * int(vectorB[2][0])))
+        result[1][0] = str((float(vectorA[2][0]) * float(vectorB[0][0])) - 
+                           (float(vectorA[0][0]) * float(vectorB[2][0])))
 
-        result[2][0] = str((int(vectorA[0][0]) * int(vectorB[1][0])) - 
-                           (int(vectorA[1][0]) * int(vectorB[0][0])))
+        result[2][0] = str((float(vectorA[0][0]) * float(vectorB[1][0])) - 
+                           (float(vectorA[1][0]) * float(vectorB[0][0])))
         return result
 
     def vector_magnitude(self, vectorA):
         magnitude = self.vector_dot_product(vectorA, vectorA)**0.5
         return magnitude
 
+    def scalar_triple_product(self, vectorA, vectorB, vectorC):
+        if not vectorA.is_column() or not vectorB.is_column or not vectorC.is_column:
+            raise Invalid_Vectors("Vector A, B or C are not column vectors")
+        if len(vectorA) != 3 or len(vectorB) != 3 or len(vectorC) != 3:
+            raise Invalid_Vectors("Vector A, B or C are not in R^3")
+
+        result = self.vector_cross_product(vectorB, vectorC)
+        return self.vector_dot_product(vectorA, result)
 
 if __name__ == "__main__":
     print("""Author         :  {}
