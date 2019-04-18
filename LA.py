@@ -20,19 +20,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # Libraries required
 import random
 import sys
+import math
 
 # Global Variables
 AUTHOR = "Tannishpage"
 GITHUB = "https://github.com/tannishpage"
 LAPY_STABLE = "https://github.com/tannishpage/LApy/tree/Stable_Version"
 LAPY_DEV = "https://github.com/tannishpage/LApy"
-VERSION = "0.6"
+VERSION = "0.7"
 
 # Exceptions that are specific
 class Zero_Determinant_Error(BaseException):pass
 class Not_Compatable_Operation(BaseException):pass
 class Incompatable_Matricies(BaseException):pass
 class Invalid_Vectors(BaseException):pass
+class Invalid_Parameter(BaseException):pass
 
 class Matrix_Operations:
 
@@ -321,6 +323,32 @@ class Vector_Operations:
 
         result = self.vector_cross_product(vectorB, vectorC)
         return self.vector_dot_product(vectorA, result)
+
+    def get_angle_between(self, vectorA, vectorB, units="rad"):
+        #theta = arcsin(a.b/|a||b|)
+        dot_product = self.vector_dot_product(vectorA, vectorB)
+        magA = self.vector_magnitude(vectorA)
+        magB = self.vector_magnitude(vectorB)
+        angle = math.acos(dot_product/(magA * magB))
+        if units.lower() == 'rad':
+            return angle
+        elif units.lower() == 'deg':
+            return math.degrees(angle)
+        else:
+            raise Invalid_Parameter("\"{}\" is not a recognised unit. \
+                  Only rad or deg. Default is rad.".format(units))
+        
+    def get_angle_between_horizontal(self, vectorA, units="rad"):
+        #Currently works for vectors in R^2
+        mag = self.vector_magnitude(vectorA)
+        angle = math.acos(float(vectorA[0][0])/mag)
+        if units.lower() == 'rad':
+            return angle
+        elif units.lower() == 'deg':
+            return math.degrees(angle)
+        else:
+            raise Invalid_Parameter("\"{}\" is not a recognised unit. \
+                  Only rad or deg. Default is rad.".format(units))
 
 if __name__ == "__main__":
     print("""Author         :  {}
