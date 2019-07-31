@@ -13,9 +13,7 @@ def account_for_var(statement):
 s = "(a - b) * (a + b)"
 account_for_var(s)
 """
-for x in range(0, 1):
-	a = mm.make_random_matrix(1000, 1001)#Matrix([["3", "5", "1"],["2", "9", "-4"],["-6", "2", "-9"]])
-	#mo.print_matrix(a)
-	mo.print_matrix(mo.RREF(a))
-#b = #Matrix([["1", "1", "1"],["2", "3", "4"],["6", "5", "6"]])
-#c = a + b
+
+m = mm.make_random_matrix(3, 4)
+mo.print_matrix(m)
+mo.print_matrix(mo.RREF(m))

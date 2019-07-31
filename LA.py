@@ -29,7 +29,7 @@ AUTHOR = "Tannishpage"
 GITHUB = "https://github.com/tannishpage"
 LAPY_STABLE = "https://github.com/tannishpage/LApy/tree/Stable_Version"
 LAPY_DEV = "https://github.com/tannishpage/LApy"
-VERSION = "0.7"
+VERSION = "0.7.1"
 DATE = str(datetime.datetime.date(datetime.datetime.now())).split("-")[0]
 MESSAGE = """Author         :  {}
 My Github      :  {}
@@ -90,7 +90,7 @@ class Matrix_Operations:
 		Return:
 			result (Matrix): returns the result of matrixA - matrixB
 		"""
-		result = matrixA
+		result = self.mcp(matrixA)
 		for x in range(0, len(result)):
 			for y in range(0, len(result[0])):
 				result[x][y] = str(float(result[x][y]) - float(matrixB[x][y]))
@@ -152,6 +152,8 @@ class Matrix_Operations:
 		for x in range(0, len(matrix)):
 			matrix = self.check_row_exchange(matrix, x)
 			piviot = float(matrix[x][x])
+			if piviot == 0.0:
+				continue
 			for y in range(x+1, len(matrix)):
 				ratio = float(float(matrix[y][x])/piviot)
 				matrix[y] = self.row_reduction(matrix[x], matrix[y], ratio)
@@ -192,9 +194,9 @@ class Matrix_Operations:
 			for x in range(0, len(matrix)):
 				if (float(matrix[x][row]) != 0.0):
 					rowB = x
+					new_matrix = self.perform_row_exchange(row, rowB, matrix)
+					return new_matrix
 					break
-			new_matrix = self.perform_row_exchange(row, rowB, matrix)
-			return new_matrix
 		else:
 			return matrix
 
@@ -424,16 +426,14 @@ class Matrix_Operations:
 			(tuple<float>): The eigan values
 		"""
 		if matrix.size() != "2x2":
-			raise NotImplimentedError("Eigan values can only be found for 2x2")
+			raise NotImplimentedError("Eigan values can only be found for 2x2 as of now")
 		else:
-			b = int(matrix[0][0]) + int(matrix[1][1])
-			c = int(matrix[0][0])*int(matrix[1][1]) - int(matrix[1][0])*int(matrix[0][1])
+			b = float(matrix[0][0]) + float(matrix[1][1])
+			c = float(matrix[0][0])*float(matrix[1][1]) - float(matrix[1][0])*float(matrix[0][1])
 			a = 1
 			lambda_plus =  -(-(b) + (b**2 - (4*(a)*(c)))**0.5)/2
 			lambda_minus = -(-(b) - (b**2 - (4*(a)*(c)))**0.5)/2
 		return (lambda_plus, lambda_minus) #eigan values
-
-
 
 
 	def print_matrix(self, *matricies, padding=12, sigfig=2):
@@ -459,6 +459,7 @@ class Matrix_Operations:
 					sys.stdout.write("\n")
 			else:
 				print("\n")
+
 class Make_Matrix:
 	"""
 	Is a class used to generate different kinds of matricies and vectors
@@ -478,7 +479,7 @@ class Make_Matrix:
 		"""(Matrix) generates a random matrix of size rows and columns"""
 		matrix = []
 		for x in range(0, rows):
-			row_values = [str(random.randint(-100, 100)) for x in range(0, columns)]
+			row_values = [str(random.uniform(-100, 100)) for x in range(0, columns)]
 			matrix.append(row_values)
 		return Matrix(matrix)
 
@@ -521,7 +522,27 @@ class Matrix:
 		self._matrix[key] = value
 
 	def __add__(self, value):
-		return self.mo.matrix_add(self._matrix, value)
+		return self._mo.matrix_add(self._matrix, value)
+
+	def __sub__(self, value):
+		return self._mo.matrix_subtract(self._matrix, value)
+
+	def __mul__(self, value):
+		if (type(value) == type(int())) or (type(value) == type(float())):
+			return self._mo.matrix_multiply_constant(self._matrix, value)
+		elif (type(value) == type(Matirx())):
+			return self._mo.matrix_multiply(self._matrix, value)
+		else:
+			raise TypeError("Incompatable opperation '*' between matrix and {}".format(type(value)))
+
+	def __pow__(self, other):
+		result = self._mo.mcp(self._matrix)
+		for count in range(0, other):
+			result = self._mo.matrix_multiply(self._matrix, result)
+		return result
+
+	def __invert__(self):
+		return self._mo.compute_inverse(self._matrix)
 
 	def append(self, value):
 		self._matrix.append(value)
@@ -554,6 +575,13 @@ class Matrix:
 	def upper_triangular(self):
 		"""(bool) check if matrix is upper triangular"""
 		pass
+
+	def is_invertable(self):
+		copy = self._mo.mcp(self._matrix)
+		if self._mo.compute_determinant(copy) == 0.0:
+			return False
+		else:
+			return True
 
 class Vector_Operations:
 	"""
@@ -700,6 +728,31 @@ class Vector_Operations:
 		else:
 			raise Invalid_Parameter("\"{}\" is not a recognised unit. \
 				  Only rad or deg. Default is rad.".format(units))
+
+	def calculate_eigan_vectors(self, matrix):
+		"""
+		Calculates the eigan vectors of the given matrix
+
+		Precondition:
+			matrix must be a 2x2 matrix
+
+		Parameters:
+			matrix (Matrix): is the matrix to find the eigan vectors for
+
+		Return: (None at this point in time)
+
+		FUNCTION IN TESTING PHASE
+		"""
+		eigan_values = self._mo.calculate_eigan_values(matrix)
+		print(eigan_values)
+		eigan_matrix_1 = self._mo.matrix_multiply_constant(
+						self._mm.make_identity_matrix(2), eigan_values[0])
+		eigan_matrix_2 = self._mo.matrix_multiply_constant(
+						self._mm.make_identity_matrix(2), eigan_values[1])
+		x = self._mo.matrix_subtract(matrix, eigan_matrix_1)
+		self._mo.print_matrix(x)
+		eigan_vector = Matrix([[float(x[0][0])/float(x[0][0]), -(float(x[0][0])/float(x[0][1]))]])
+		self._mo.print_matrix(eigan_vector)
 
 
 if __name__ == "__main__":
