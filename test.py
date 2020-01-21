@@ -14,6 +14,5 @@ s = "(a - b) * (a + b)"
 account_for_var(s)
 """
 
-m = mm.make_random_matrix(3, 4)
-mo.print_matrix(m)
-mo.print_matrix(mo.RREF(m))
+G = [['4', '2', '1', '3'], ['16', '4', '1', '3'], ['9', '3', '1', '2']]
+mo.print_matrix(mo.RREF(G))

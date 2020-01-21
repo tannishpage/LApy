@@ -435,6 +435,40 @@ class Matrix_Operations:
 			lambda_minus = -(-(b) - (b**2 - (4*(a)*(c)))**0.5)/2
 		return (lambda_plus, lambda_minus) #eigan values
 
+	def calculate_eigan_vectors(self, matrix):
+		"""
+		Calculates the eigan vectors of the given matrix
+
+		Precondition:
+			matrix must be a 2x2 matrix
+
+		Parameters:
+			matrix (Matrix): is the matrix to find the eigan vectors for
+
+		Return:
+			eigan_vector_1 (Matrix): The first eigen vector
+			eigan_vector_2 (Matrix): The secon eigen vector
+
+		Are Eigen vectors in the right formart?
+
+		FUNCTION IN TESTING PHASE
+		"""
+		eigan_values = self.calculate_eigan_values(matrix)
+		print(eigan_values)
+		eigan_matrix_1 = self.matrix_multiply_constant(
+						self._mm.make_identity_matrix(2), eigan_values[0])
+		eigan_matrix_2 = self.matrix_multiply_constant(
+						self._mm.make_identity_matrix(2), eigan_values[1])
+		x = self.matrix_subtract(matrix, eigan_matrix_1)
+		self.print_matrix(x)
+		eigan_vector_1 = Matrix([[float(x[0][0])/float(x[0][0])],
+							[-(float(x[0][0])/float(x[0][1]))]])
+		y = self.matrix_subtract(matrix, eigan_matrix_2)
+		eigan_vector_2 = Matrix([[float(y[0][0])/float(y[0][0])],
+							[-(float(y[0][0])/float(y[0][1]))]])
+
+		return eigan_vector_1, eigan_vector_2
+
 
 	def print_matrix(self, *matricies, padding=12, sigfig=2):
 		"""
@@ -456,7 +490,7 @@ class Matrix_Operations:
 					sys.stdout.write("{:<{}}".format("{:.{}f}".format(
 											  float(element), sigfig), padding))
 				else:
-					sys.stdout.write("\n")
+					sys.stdout.write("\n\n")
 			else:
 				print("\n")
 
@@ -694,7 +728,7 @@ class Vector_Operations:
 			units (str): Default "rad", determins what units the output will be
 			in. Radians or degrees "rad" or "deg"
 		"""
-		#theta = arcsin(a.b/|a||b|)
+		#theta = arccos(a.b/|a||b|)
 		dot_product = self.vector_dot_product(vectorA, vectorB)
 		magA = self.vector_magnitude(vectorA)
 		magB = self.vector_magnitude(vectorB)
@@ -719,8 +753,7 @@ class Vector_Operations:
 			units (str): Default "rad", determins what units the output will be
 			in. Radians or degrees "rad" or "deg"
 		"""
-		mag = self.vector_magnitude(vectorA)
-		angle = math.acos(float(vectorA[0][0])/mag)
+		angle = math.atan(float(vectorA[0][1])/float(vectorA[0][0]))
 		if units.lower() == 'rad':
 			return angle
 		elif units.lower() == 'deg':
@@ -728,31 +761,6 @@ class Vector_Operations:
 		else:
 			raise Invalid_Parameter("\"{}\" is not a recognised unit. \
 				  Only rad or deg. Default is rad.".format(units))
-
-	def calculate_eigan_vectors(self, matrix):
-		"""
-		Calculates the eigan vectors of the given matrix
-
-		Precondition:
-			matrix must be a 2x2 matrix
-
-		Parameters:
-			matrix (Matrix): is the matrix to find the eigan vectors for
-
-		Return: (None at this point in time)
-
-		FUNCTION IN TESTING PHASE
-		"""
-		eigan_values = self._mo.calculate_eigan_values(matrix)
-		print(eigan_values)
-		eigan_matrix_1 = self._mo.matrix_multiply_constant(
-						self._mm.make_identity_matrix(2), eigan_values[0])
-		eigan_matrix_2 = self._mo.matrix_multiply_constant(
-						self._mm.make_identity_matrix(2), eigan_values[1])
-		x = self._mo.matrix_subtract(matrix, eigan_matrix_1)
-		self._mo.print_matrix(x)
-		eigan_vector = Matrix([[float(x[0][0])/float(x[0][0]), -(float(x[0][0])/float(x[0][1]))]])
-		self._mo.print_matrix(eigan_vector)
 
 
 if __name__ == "__main__":
